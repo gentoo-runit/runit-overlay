@@ -6,7 +6,7 @@ EGIT_REPO_URI="https://github.com/gentoo-runit/runit-services.git"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS=""
-IUSE="dbus dhcpcd elogind iwd networkmanager seatd sshd udisks"
+IUSE="dbus dhcpcd elogind iwd networkmanager seatd sshd turnstiled udisks ufw"
 REQUIRED_USE="?? ( elogind seatd )"
 RDEPEND="
 	dbus?           ( sys-apps/dbus )
@@ -16,7 +16,9 @@ RDEPEND="
 	networkmanager? ( net-misc/networkmanager )
 	seatd?          ( sys-auth/seatd )
 	sshd?           ( net-misc/openssh )
+	turnstiled?         ( sys-apps/turnstile )
 	udisks?         ( sys-fs/udisks )
+	ufw?         ( net-firewall/ufw )
 "
 # turnstiled intentionally left out: it isn't in the Gentoo tree yet,
 # add it back once it has an actual build ebuild to depend on.
@@ -29,12 +31,14 @@ src_install() {
 	use networkmanager   && doins -r sv/NetworkManager
 	use seatd            && doins -r sv/seatd
 	use sshd             && doins -r sv/sshd
+	use turnstiled           && doins -r sv/turnstiled
 	use udisks           && doins -r sv/udisks2
+	use ufw           && doins -r sv/ufw
 
 	# doins doesn't preserve the executable bit, set it explicitly
 	# for every run script that actually got installed.
 	local d
-	for d in dbus dhcpcd elogind iwd NetworkManager seatd sshd udisks2; do
+	for d in dbus dhcpcd elogind iwd NetworkManager seatd sshd turnstiled udisks2 ufw; do
 		[[ -f "${ED}/etc/sv/${d}/run" ]] && fperms 755 "/etc/sv/${d}/run"
 		[[ -f "${ED}/etc/sv/${d}/log/run" ]] && fperms 755 "/etc/sv/${d}/log/run"
 	done
