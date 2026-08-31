@@ -13,6 +13,7 @@ KEYWORDS=""
 RDEPEND="
 	!!sys-apps/openrc
 	!!sys-apps/sysvinit
+	sys-apps/kbd
 	sys-apps/util-linux
 	sys-fs/e2fsprogs
 	sys-process/runit
@@ -22,6 +23,9 @@ src_install() {
 	exeinto /etc/runit/rc
 	doexe rc/1.*.sh rc/3.*.sh
 
+	insinto /etc
+	doins etc/rc.conf
+
 	dosbin bin/reboot bin/poweroff bin/halt bin/shutdown
 }
 
@@ -29,6 +33,9 @@ pkg_postinst() {
 	elog "Installed rc scripts to /etc/runit/rc/."
 	elog "These only take effect on the next boot/shutdown cycle;"
 	elog "nothing here restarts a running system."
+	elog ""
+	elog "Installed /etc/rc.conf (protected by CONFIG_PROTECT)."
+	elog "Edit KEYMAP and FONT there to set your console keymap/font."
 	elog ""
 	elog "Installed reboot, poweroff, halt and shutdown wrappers around runit-init."
 }
